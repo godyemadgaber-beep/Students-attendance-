@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Manager</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 500px;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            color: #1b365d;
+            font-size: 32px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #616161;
+            font-size: 14px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #dcdcdc;
+            border-radius: 10px;
+            font-size: 15px;
+            background-color: #fcfcfc;
+            outline: none;
+        }
+
+        .btn-save {
+            width: auto;
+            padding: 12px 24px;
+            background-color: #1246c7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            display: block;
+            margin-top: 10px;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #1246c7; 
+            min-height: 20px;
+        }
+
+        .products-section {
+            margin-top: 40px;
+            text-align: left;
+        }
+
+        .products-section h2 {
+            color: #2d3748;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        /* تنسيق شكل المنتج المضاف وزر الحذف */
+        .product-item {
+            background: #f8fafc;
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #1246c7;
+        }
+
+        .product-info {
+            font-size: 15px;
+            color: #4a5568;
+        }
+
+        .btn-delete {
+            background-color: #e53e3e;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .btn-delete:hover {
+            background-color: #c53030;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Product Manager</h1>
+        <p class="subtitle">Manage your products using JavaScript and Local Storage</p>
+
+        <div class="form-group">
+            <input type="text" id="productName" placeholder="Product name">
+        </div>
+        <div class="form-group">
+            <input type="text" id="productPrice" placeholder="Product price">
+        </div>
+        <div class="form-group">
+            <input type="text" id="productQuantity" placeholder="Product quantity">
+        </div>
+
+        <button class="btn-save" id="saveBtn">Save Product</button>
+        
+        <p id="message"></p>
+
+        <div class="products-section">
+            <h2>Products</h2>
+            <div id="productsList"></div>
+        </div>
+    </div>
+
+    <script>
+        // 1. مسك العناصر باستخدام let
+        let productName = document.getElementById("productName");
+        let productPrice = document.getElementById("productPrice");
+        let productQuantity = document.getElementById("productQuantity");
+        let saveBtn = document.getElementById("saveBtn");
+        let message = document.getElementById("message");
+        let productsList = document.getElementById("productsList");
+
+        // 2. دالة بسيطة لعرض المنتج المخزن في الصفحة
+        function showProduct() {
+            // جلب الاسم والسعر والكمية من الـ localStorage
+            let name = localStorage.getItem("name");
+            let price = localStorage.getItem("price");
+            let quantity = localStorage.getItem("quantity");
+
+            // لو البيانات موجودة، قم بعرضها مع زر الحذف
+            if (name && price && quantity) {
+                productsList.innerHTML = `
+                    <div class="product-item">
+                        <div class="product-info">
+                            <strong>${name}</strong> - ${price} (Qty: ${quantity})
+                        </div>
+                        <button class="btn-delete" onclick="deleteProduct()">Delete</button>
+                    </div>
+                `;
+            } else {
+                productsList.innerHTML = ""; // لو مفيش بيانات امسح العنصر من الشاشة
+            }
+        }
+
+        // 3. عند الضغط على زر الحفظ
+        saveBtn.onclick = function() {
+            
+            if (productName.value == "" || productPrice.value == "" || productQuantity.value == "") {
+                message.style.color = "red";
+                message.innerText = "Please fill out all fields! 😭💔";
+                return;
+            }
+
+            // حفظ القيم بشكل مستقل وبسيط
+            localStorage.setItem("name", productName.value);
+            localStorage.setItem("price", productPrice.value);
+            localStorage.setItem("quantity", productQuantity.value);
+
+            // إظهار الرسالة وتحديث العرض ومسح الحقول
+            message.style.color = "#1246c7";
+            message.innerText = "Product Added Successfully 🔥🎉";
+
+            showProduct(); // تشغيل دالة العرض فوراً ليظهر المنتج في الأسفل
+
+            productName.value = "";
+            productPrice.value = "";
+            productQuantity.value = "";
+        };
+
+        // 4. دالة حذف المنتج عند الضغط على زر Delete
+        function deleteProduct() {
+            // مسح البيانات تماماً من ذاكرة المتصفح
+            localStorage.removeItem("name");
+            localStorage.removeItem("price");
+            localStorage.removeItem("quantity");
+
+            // إعادة تشغيل دالة العرض لتحديث الشاشة وإخفاء المنتج
+            showProduct();
+        }
+
+        // 5. تشغيل الدالة تلقائياً عند فتح الصفحة لعرض المنتج إن كان محفوظاً من قبل
+        showProduct();
+    </script>
+
+</body>
+</html>
